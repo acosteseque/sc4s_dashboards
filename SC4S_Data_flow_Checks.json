@@ -1,0 +1,587 @@
+{
+	"dataSources": {
+		"ds_search_1_new": {
+			"type": "ds.search",
+			"options": {
+				"query": "index=sc4s sourcetype=\"sc4s:events\" linecount=1 | table _time _raw",
+				"queryParameters": {
+					"earliest": "-15m",
+					"latest": "now"
+				}
+			}
+		},
+		"ds_search_1": {
+			"type": "ds.search",
+			"options": {
+				"query": "index=sc4s sourcetype=\"sc4s:events\" \n| rex max_match=0 field=_raw \"(?<lineData>spl\\.sc4syslog.\\w+.\\w+.\\w+.\\w+.\\w+\\=\\d+)\" \n| mvexpand lineData \n| fields lineData _time sc4s_container sc4s_loghost\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.src\\.(?<src_facility>\\w+.\\w+.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.src\\.internal\\.(?<src_facility>.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.source\\.(?<src_facility>.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.filter\\.(?<filter>\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.parser\\.(?<parser>\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.dst\\.(?<dest>\\w+.\\w+.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.dst\\.(?<dest>\\w+.\\w+.\\w+\\w+.+?)\\.(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.(?<dest>\\w+.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.destination\\.(?<dest>.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.global\\.(?<dest>\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| eval uniq=parser.\"-\".action \n| search uniq!=msg_allocated_bytes* | stats max(value) AS value by uniq",
+				"queryParameters": {
+					"earliest": "-15m",
+					"latest": "now"
+				}
+			},
+			"name": "base search"
+		},
+		"ds_lBzmLKzy_ds_search_1": {
+			"type": "ds.search",
+			"options": {
+				"query": "index=sc4s sourcetype=\"sc4s:events\" \n| rex max_match=0 field=_raw \"(?<lineData>spl\\.sc4syslog.\\w+.\\w+.\\w+.\\w+.\\w+\\=\\d+)\" \n| mvexpand lineData \n| fields lineData _time sc4s_container sc4s_loghost\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.src\\.(?<src_facility>\\w+.\\w+.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.src\\.internal\\.(?<src_facility>.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.source\\.(?<src_facility>.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.filter\\.(?<filter>\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.parser\\.(?<parser>\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.dst\\.(?<dest>\\w+.\\w+.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.dst\\.(?<dest>\\w+.\\w+.\\w+\\w+.+?)\\.(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.(?<dest>\\w+.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.destination\\.(?<dest>.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.global\\.(?<dest>\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| eval uniq=parser.\"-\".action \n| search uniq!=msg_allocated_bytes*\n| stats max(value) AS value by uniq",
+				"queryParameters": {
+					"earliest": "-15m",
+					"latest": "now"
+				}
+			}
+		},
+		"ds_PbGYY6y1": {
+			"type": "ds.chain",
+			"options": {
+				"query": "index=sc4s sourcetype=\"sc4s:events\" \n| rex max_match=0 field=_raw \"(?<lineData>spl\\.sc4syslog.\\w+.\\w+.\\w+.\\w+.\\w+\\=\\d+)\" \n| mvexpand lineData \n| fields lineData _time sc4s_container sc4s_loghost\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.src\\.(?<src_facility>\\w+.\\w+.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.src\\.internal\\.(?<src_facility>.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.source\\.(?<src_facility>.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.filter\\.(?<filter>\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.parser\\.(?<parser>\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.dst\\.(?<dest>\\w+.\\w+.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.dst\\.(?<dest>\\w+.\\w+.\\w+\\w+.+?)\\.(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.(?<dest>\\w+.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.destination\\.(?<dest>.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.global\\.(?<dest>\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| eval uniq=parser.\"-\".action \n| search uniq!=msg_allocated_bytes*"
+			},
+			"name": "Search_1"
+		},
+		"ds_HVe8kz2v": {
+			"type": "ds.chain",
+			"options": {
+				"extend": "ds_PbGYY6y1",
+				"query": "| stats max(value) AS value by uniq"
+			},
+			"name": "Search_2"
+		},
+		"ds_Nr4jkNh6": {
+			"type": "ds.search",
+			"options": {
+				"query": "index=sc4s sourcetype=\"sc4s:events\" \n| rex max_match=0 field=_raw \"(?<lineData>spl\\.sc4syslog.\\w+.\\w+.\\w+.\\w+.\\w+\\=\\d+)\" \n| mvexpand lineData \n| fields lineData _time sc4s_container sc4s_loghost\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.src\\.(?<src_facility>\\w+.\\w+.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.src\\.internal\\.(?<src_facility>.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.source\\.(?<src_facility>.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.filter\\.(?<filter>\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.parser\\.(?<parser>\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.dst\\.(?<dest>\\w+.\\w+.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.dst\\.(?<dest>\\w+.\\w+.\\w+\\w+.+?)\\.(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.(?<dest>\\w+.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.destination\\.(?<dest>.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.global\\.(?<dest>\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| eval uniq=filter.\"-\".action \n| search uniq!=msg_allocated_bytes*\n| stats max(value) AS value by uniq"
+			},
+			"name": "Count by filter"
+		},
+		"ds_XCcvwKKF_ds_Nr4jkNh6": {
+			"type": "ds.search",
+			"options": {
+				"query": "index=sc4s sourcetype=\"sc4s:events\" earliest=-15m\n| rex max_match=0 field=_raw \"(?<lineData>spl\\.sc4syslog.\\w+.\\w+.\\w+.\\w+.\\w+\\=\\d+)\" \n| mvexpand lineData \n| fields lineData _time sc4s_container sc4s_loghost\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.src\\.(?<src_facility>\\w+.\\w+.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.src\\.internal\\.(?<src_facility>.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.source\\.(?<src_facility>.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.filter\\.(?<filter>\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.parser\\.(?<parser>\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.dst\\.(?<dest>\\w+.\\w+.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.dst\\.(?<dest>\\w+.\\w+.\\w+\\w+.+?)\\.(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.(?<dest>\\w+.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.destination\\.(?<dest>.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.global\\.(?<dest>\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| eval uniq=dest.\"-\".action \n| search uniq!=msg_allocated_bytes*\n| stats max(value) AS value by uniq"
+			},
+			"name": "count by dest"
+		},
+		"ds_3Co395T9_ds_HVe8kz2v": {
+			"type": "ds.chain",
+			"options": {
+				"extend": "ds_PbGYY6y1",
+				"query": "| stats max(value) AS value by uniq"
+			},
+			"name": "Copy of Search_2"
+		},
+		"ds_6ejkMK9Z_ds_Nr4jkNh6": {
+			"type": "ds.search",
+			"options": {
+				"query": "index=sc4s sourcetype=\"sc4s:events\" \n| rex max_match=0 field=_raw \"(?<lineData>spl\\.sc4syslog.\\w+.\\w+.\\w+.\\w+.\\w+\\=\\d+)\" \n| mvexpand lineData \n| fields lineData _time sc4s_container sc4s_loghost\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.src\\.(?<src_facility>\\w+.\\w+.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.src\\.internal\\.(?<src_facility>.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.source\\.(?<src_facility>.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.filter\\.(?<filter>\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.parser\\.(?<parser>\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.dst\\.(?<dest>\\w+.\\w+.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.dst\\.(?<dest>\\w+.\\w+.\\w+\\w+.+?)\\.(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.(?<dest>\\w+.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.destination\\.(?<dest>.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.global\\.(?<dest>\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| eval uniq=src_facility.\"-\".action \n| search uniq!=msg_allocated_bytes*\n| stats max(value) AS value by uniq"
+			},
+			"name": "Copy of Count by filter"
+		},
+		"ds_WOFjjNxu_ds_Nr4jkNh6": {
+			"type": "ds.search",
+			"options": {
+				"query": "index=sc4s sourcetype=\"sc4s:events\" \n| rex max_match=0 field=_raw \"(?<lineData>spl\\.sc4syslog.\\w+.\\w+.\\w+.\\w+.\\w+\\=\\d+)\" \n| mvexpand lineData \n| fields lineData _time sc4s_container sc4s_loghost\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.src\\.(?<src_facility>\\w+.\\w+.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.src\\.internal\\.(?<src_facility>.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.source\\.(?<src_facility>.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.filter\\.(?<filter>\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.parser\\.(?<parser>\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.dst\\.(?<dest>\\w+.\\w+.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.dst\\.(?<dest>\\w+.\\w+.\\w+\\w+.+?)\\.(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.(?<dest>\\w+.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.destination\\.(?<dest>.\\w+).(?<action>\\w+)\\=(?<value>\\d+)\"\n| rex max_match=0 field=lineData \"spl\\.sc4syslog\\.global\\.(?<dest>\\w+).(?<action>\\w+)\\=(?<value>\\d+)\" \n| eval uniq=parser.\"-\".action \n| search uniq!=msg_allocated_bytes*\n| stats max(value) AS value by uniq"
+			},
+			"name": "Copy of Count by filter"
+		},
+		"ds_9fR8ArGY": {
+			"type": "ds.search",
+			"options": {
+				"query": "(component=\"HttpEventCollector\" \"data.series\"=\"http_event_collector\" index=_introspection) \n| timechart partial=f minspan=1m sum(data.num_of_events) as events_total, sum(data.num_of_requests) as requests_total, sum(data.num_of_parser_errors) as parser_error_total, sum(data.num_of_requests_to_disabled_token) as requests_to_disabled_token_total, sum(data.num_of_auth_failures) as auth_failures_total, sum(data.num_of_requests_to_incorrect_url) as requests_to_incorrect_url_total, sum(data.total_bytes_indexed) as data_indexed, sum(data.total_bytes_received) as data_received \n| eval data_received=(data_received / 1048576), data_indexed=(data_indexed / 1048576) \n| fields + _time, data_received, \n| rename data_received as \"HEC Data Received\""
+			},
+			"name": "Search_3"
+		},
+		"ds_WZv6ompG_ds_9fR8ArGY": {
+			"type": "ds.search",
+			"options": {
+				"query": "| metasearch index=* \n| timechart count by index span=60m"
+			},
+			"name": "event count by index"
+		},
+		"ds_TiKl5Sto_ds_search_1_new": {
+			"type": "ds.search",
+			"options": {
+				"query": "index!=sc4s index=* \n|  head 5 \n|  rename _time AS time _raw AS data\n| table time data",
+				"queryParameters": {
+					"earliest": "-15m",
+					"latest": "now"
+				}
+			}
+		}
+	},
+	"visualizations": {
+		"viz_table_1": {
+			"type": "splunk.table",
+			"options": {
+				"count": 20,
+				"dataOverlayMode": "none",
+				"drilldown": "none",
+				"percentagesRow": false,
+				"rowNumbers": false,
+				"totalsRow": false,
+				"wrap": true
+			},
+			"dataSources": {
+				"primary": "ds_search_1_new"
+			},
+			"title": "syslog-ng errors (may be blank)"
+		},
+		"viz_4WQcq5gC": {
+			"type": "viz.img",
+			"options": {
+				"preserveAspectRatio": true,
+				"src": "/static/app/sc4s-4rookies/images/s4rlogo.png"
+			}
+		},
+		"viz_nJEtYgSo": {
+			"type": "viz.pie",
+			"options": {
+				"chart.showPercent": true,
+				"chart.sliceCollapsingThreshold": 0
+			},
+			"dataSources": {
+				"primary": "ds_Nr4jkNh6"
+			},
+			"title": ""
+		},
+		"viz_s4dEQup7": {
+			"type": "viz.pie",
+			"options": {
+				"chart.showPercent": true,
+				"chart.sliceCollapsingThreshold": 0.05
+			},
+			"dataSources": {
+				"primary": "ds_XCcvwKKF_ds_Nr4jkNh6"
+			},
+			"title": ""
+		},
+		"viz_LlllaJhn": {
+			"type": "viz.pie",
+			"options": {
+				"chart.showPercent": true,
+				"chart.sliceCollapsingThreshold": 0
+			},
+			"dataSources": {
+				"primary": "ds_6ejkMK9Z_ds_Nr4jkNh6"
+			},
+			"title": ""
+		},
+		"viz_o8WVgxKE": {
+			"type": "viz.pie",
+			"options": {
+				"chart.showPercent": true,
+				"chart.sliceCollapsingThreshold": 0
+			},
+			"dataSources": {
+				"primary": "ds_WOFjjNxu_ds_Nr4jkNh6"
+			},
+			"title": "Parsing Discards (none is good)"
+		},
+		"viz_H4AcbMA3": {
+			"type": "abslayout.line",
+			"options": {
+				"strokeWidth": 5,
+				"toArrow": true
+			}
+		},
+		"viz_oitG0s3C": {
+			"type": "abslayout.line",
+			"options": {
+				"strokeWidth": 5,
+				"toArrow": true
+			}
+		},
+		"viz_lBlZrVlA": {
+			"type": "abslayout.line",
+			"options": {
+				"strokeWidth": 5,
+				"toArrow": true
+			}
+		},
+		"viz_WL9cNMx8": {
+			"type": "viz.img",
+			"options": {
+				"preserveAspectRatio": true,
+				"src": "/static/app/sc4s-4rookies/images/sc4slogo.png"
+			}
+		},
+		"viz_Eahg9hxw": {
+			"type": "viz.area",
+			"options": {
+				"chart.nullValueMode": "zero",
+				"legend.placement": "bottom",
+				"axisTitleX.text": ".",
+				"axisTitleY.text": ".",
+				"chart.stackMode": "stacked"
+			},
+			"dataSources": {
+				"primary": "ds_9fR8ArGY"
+			}
+		},
+		"viz_U3V18IXE": {
+			"type": "viz.rectangle"
+		},
+		"viz_M1U5vx1y": {
+			"type": "viz.rectangle",
+			"options": {
+				"stroke": "#ffffff",
+				"fill": "#ec008c"
+			},
+			"encoding": {}
+		},
+		"viz_nlbJgdJh": {
+			"type": "viz.line",
+			"dataSources": {
+				"primary": "ds_WZv6ompG_ds_9fR8ArGY"
+			},
+			"title": "Events received by Index",
+			"options": {
+				"legend.placement": "bottom"
+			}
+		},
+		"viz_43ElHUyv": {
+			"type": "abslayout.line",
+			"options": {
+				"strokeWidth": 5,
+				"toArrow": true
+			}
+		},
+		"viz_PXgB4p3X": {
+			"type": "abslayout.line",
+			"options": {
+				"strokeWidth": 5,
+				"toArrow": true
+			}
+		},
+		"viz_kDnt2bDt": {
+			"type": "viz.img",
+			"options": {
+				"preserveAspectRatio": true,
+				"src": "/static/app/sc4s-4rookies/images/spllogo.svg"
+			}
+		},
+		"viz_hmi1owZm": {
+			"type": "splunk.table",
+			"options": {
+				"count": 20,
+				"dataOverlayMode": "none",
+				"drilldown": "none",
+				"percentagesRow": false,
+				"rowNumbers": false,
+				"totalsRow": false,
+				"wrap": true,
+				"backgroundColor": "#ec008c",
+				"tableFormat": {
+					"rowBackgroundColors": "> table | seriesByIndex(0) | pick(tableAltRowBackgroundColorsByBackgroundColor)",
+					"headerBackgroundColor": "> backgroundColor | setColorChannel(tableHeaderBackgroundColorConfig)",
+					"rowColors": "> rowBackgroundColors | maxContrast(tableRowColorMaxContrast)",
+					"headerColor": "> headerBackgroundColor | maxContrast(tableRowColorMaxContrast)"
+				},
+				"headerVisibility": "fixed"
+			},
+			"dataSources": {
+				"primary": "ds_TiKl5Sto_ds_search_1_new"
+			},
+			"title": "Syslog events"
+		},
+		"viz_H584kkKO": {
+			"type": "viz.text",
+			"options": {
+				"content": "Source of the data \n(Typically Network)"
+			}
+		},
+		"viz_4XK83IH8": {
+			"type": "viz.text",
+			"options": {
+				"content": "Filters matching and being applied to the data\n"
+			}
+		},
+		"viz_6BuqQUxj": {
+			"type": "viz.text",
+			"options": {
+				"content": "Destinations send the events too Splunk (HEC)\n"
+			}
+		},
+		"viz_7i9U7pwm": {
+			"type": "viz.text",
+			"options": {
+				"content": "Data Parsers, timestamp and metadata"
+			}
+		}
+	},
+	"inputs": {
+		"input_6NojjPKF": {
+			"type": "input.timerange",
+			"options": {
+				"token": "global_time",
+				"defaultValue": "-60m@m,now"
+			},
+			"title": "Global Time Range"
+		}
+	},
+	"layout": {
+		"type": "absolute",
+		"options": {
+			"display": "auto-scale",
+			"height": 1100,
+			"width": 1500
+		},
+		"structure": [
+			{
+				"item": "viz_H4AcbMA3",
+				"type": "line",
+				"position": {
+					"from": {
+						"item": "viz_nJEtYgSo",
+						"port": "e"
+					},
+					"to": {
+						"item": "viz_o8WVgxKE",
+						"port": "w"
+					}
+				}
+			},
+			{
+				"item": "viz_oitG0s3C",
+				"type": "line",
+				"position": {
+					"from": {
+						"item": "viz_LlllaJhn",
+						"port": "s"
+					},
+					"to": {
+						"item": "viz_nJEtYgSo",
+						"port": "n"
+					}
+				}
+			},
+			{
+				"item": "viz_lBlZrVlA",
+				"type": "line",
+				"position": {
+					"from": {
+						"x": 625,
+						"y": 500
+					},
+					"to": {
+						"x": 625,
+						"y": 400
+					}
+				}
+			},
+			{
+				"item": "viz_M1U5vx1y",
+				"type": "block",
+				"position": {
+					"x": 810,
+					"y": 0,
+					"w": 670,
+					"h": 1020
+				}
+			},
+			{
+				"item": "viz_U3V18IXE",
+				"type": "block",
+				"position": {
+					"x": 0,
+					"y": 0,
+					"w": 800,
+					"h": 1020
+				}
+			},
+			{
+				"item": "viz_4WQcq5gC",
+				"type": "block",
+				"position": {
+					"x": 10,
+					"y": 0,
+					"w": 60,
+					"h": 80
+				}
+			},
+			{
+				"item": "viz_nJEtYgSo",
+				"type": "block",
+				"position": {
+					"x": 10,
+					"y": 500,
+					"w": 310,
+					"h": 220
+				}
+			},
+			{
+				"item": "viz_s4dEQup7",
+				"type": "block",
+				"position": {
+					"x": 460,
+					"y": 180,
+					"w": 330,
+					"h": 220
+				}
+			},
+			{
+				"item": "viz_LlllaJhn",
+				"type": "block",
+				"position": {
+					"x": 10,
+					"y": 180,
+					"w": 310,
+					"h": 210
+				}
+			},
+			{
+				"item": "viz_o8WVgxKE",
+				"type": "block",
+				"position": {
+					"x": 470,
+					"y": 500,
+					"w": 310,
+					"h": 220
+				}
+			},
+			{
+				"item": "viz_WL9cNMx8",
+				"type": "block",
+				"position": {
+					"x": 320,
+					"y": 10,
+					"w": 150,
+					"h": 150
+				}
+			},
+			{
+				"item": "viz_table_1",
+				"type": "block",
+				"position": {
+					"x": 10,
+					"y": 790,
+					"w": 780,
+					"h": 220
+				}
+			},
+			{
+				"item": "viz_Eahg9hxw",
+				"type": "block",
+				"position": {
+					"x": 830,
+					"y": 180,
+					"w": 630,
+					"h": 220
+				}
+			},
+			{
+				"item": "viz_nlbJgdJh",
+				"type": "block",
+				"position": {
+					"x": 830,
+					"y": 500,
+					"w": 630,
+					"h": 220
+				}
+			},
+			{
+				"item": "viz_43ElHUyv",
+				"type": "line",
+				"position": {
+					"from": {
+						"item": "viz_s4dEQup7",
+						"port": "e"
+					},
+					"to": {
+						"x": 830,
+						"y": 289
+					}
+				}
+			},
+			{
+				"item": "viz_PXgB4p3X",
+				"type": "line",
+				"position": {
+					"from": {
+						"item": "viz_Eahg9hxw",
+						"port": "s"
+					},
+					"to": {
+						"item": "viz_nlbJgdJh",
+						"port": "n"
+					}
+				}
+			},
+			{
+				"item": "viz_kDnt2bDt",
+				"type": "block",
+				"position": {
+					"x": 1070,
+					"y": 10,
+					"w": 150,
+					"h": 150
+				}
+			},
+			{
+				"item": "viz_hmi1owZm",
+				"type": "block",
+				"position": {
+					"x": 820,
+					"y": 790,
+					"w": 650,
+					"h": 220
+				}
+			},
+			{
+				"item": "viz_H584kkKO",
+				"type": "block",
+				"position": {
+					"x": 10,
+					"y": 110,
+					"w": 300,
+					"h": 50
+				}
+			},
+			{
+				"item": "viz_4XK83IH8",
+				"type": "block",
+				"position": {
+					"x": 10,
+					"y": 710,
+					"w": 300,
+					"h": 50
+				}
+			},
+			{
+				"item": "viz_6BuqQUxj",
+				"type": "block",
+				"position": {
+					"x": 470,
+					"y": 108,
+					"w": 300,
+					"h": 70
+				}
+			},
+			{
+				"item": "viz_7i9U7pwm",
+				"type": "block",
+				"position": {
+					"x": 470,
+					"y": 710,
+					"w": 300,
+					"h": 80
+				}
+			}
+		],
+		"globalInputs": [
+			"input_6NojjPKF"
+		]
+	},
+	"title": "01 - SC4S Data flow Checks",
+	"description": "High level dashboard to show data gen and ingestion flow",
+	"defaults": {
+		"dataSources": {
+			"ds.search": {
+				"options": {
+					"queryParameters": {
+						"latest": "$global_time.latest$",
+						"earliest": "$global_time.earliest$"
+					}
+				}
+			}
+		}
+	}
+}

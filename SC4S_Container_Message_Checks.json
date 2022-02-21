@@ -1,0 +1,91 @@
+{
+	"dataSources": {
+		"ds_search_1": {
+			"type": "ds.search",
+			"options": {
+				"query": "index=sc4s (sourcetype=\"sc4s:events\" OR sourcetype=\"sc4s:probe\") linecount=1 | table _time sourcetype _raw \n| sort - _time",
+				"queryParameters": {
+					"earliest": "$global_time.earliest$",
+					"latest": "$global_time.latest$"
+				}
+			}
+		},
+		"ds_AMTmDGYV_ds_search_1": {
+			"type": "ds.search",
+			"options": {
+				"query": "index=sc4s sourcetype=\"sc4s:events\" linecount=1 | table _time _raw",
+				"queryParameters": {
+					"earliest": "-15m",
+					"latest": "now"
+				}
+			}
+		},
+		"ds_tyOAvc1X": {
+			"type": "ds.search",
+			"options": {},
+			"name": "Search_1"
+		}
+	},
+	"visualizations": {
+		"viz_table_1": {
+			"type": "splunk.table",
+			"options": {
+				"dataOverlayMode": "none",
+				"drilldown": "none",
+				"percentagesRow": false,
+				"rowNumbers": false,
+				"totalsRow": false,
+				"wrap": true,
+				"count": 100,
+				"showRowNumbers": true
+			},
+			"dataSources": {
+				"primary": "ds_search_1"
+			},
+			"title": "SC4S:events"
+		}
+	},
+	"inputs": {
+		"input_global_trp": {
+			"type": "input.timerange",
+			"options": {
+				"token": "global_time",
+				"defaultValue": "-15m,now"
+			},
+			"title": "Global Time Range"
+		}
+	},
+	"layout": {
+		"type": "grid",
+		"options": {},
+		"structure": [
+			{
+				"item": "viz_table_1",
+				"type": "block",
+				"position": {
+					"x": 0,
+					"y": 0,
+					"w": 1200,
+					"h": 830
+				}
+			}
+		],
+		"globalInputs": [
+			"input_global_trp"
+		]
+	},
+	"title": "02 - SC4S Container Message Checks",
+	"description": "Messages from \"sc4s:events\" or \"sc4s:probe\"",
+	"defaults": {
+		"dataSources": {
+			"ds.search": {
+				"options": {
+					"queryParameters": {
+						"latest": "$global_time.latest$",
+						"earliest": "$global_time.earliest$"
+					}
+				}
+			}
+		}
+	}
+}

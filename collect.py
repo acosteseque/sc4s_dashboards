@@ -24,16 +24,12 @@ def collect_events(helper, ew):
     helper.log_info("API collection started.")
    
     url = "https://login.microsoftonline.com/"+global_tenant_id+"/oauth2/v2.0/token"
-   
-    payload = json.dumps({
-      "scope": "https://graph.microsoft.com/.default",
-      "grant_type": "client_credentials",
-      "client_id": global_client_id,
-      "client_secret": global_client_secret
-    })
-   
+
+    payload='scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&grant_type=client_credentials&client_id='+global_client_id+'&client_secret='+global_client_secret
+    
     headers = {
-      'Content-Type': 'application/json'
+      'application': 'x-www-form-urlencoded',
+      'Content-Type': 'application/x-www-form-urlencoded',
     }
    
     response = requests.request("POST", url, headers=headers, data=payload)

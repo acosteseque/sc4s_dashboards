@@ -40,18 +40,6 @@ def collect_events(helper, ew):
     # helper.log_info(r_json["access_token"])
    
     ## 2eme partie recup des events
-    now = int(datetime.timestamp(datetime.now()))
-    # helper.log_info('now: {}'.format(now))
-   
-    # helper.save_check_point('altospam_stanza_out' + '_date', "1641391814")
-    # helper.delete_check_point('altospam_stanza_out' + '_date')
-    state = helper.get_check_point('altospam_stanza_out' + '_date')
-    helper.log_info('checkpoint/state: {}'.format(state))
-   
-    # if state :
-    #     state = int(state)
-    # else :
-    #     state = 0
        
     url = "https://graph.microsoft.com/v1.0/deviceManagement/managedDevices"
 
@@ -68,11 +56,37 @@ def collect_events(helper, ew):
     r_status = response.status_code
 
     if r_status == 200 :
+        if "@odata.nextLink" in r_json:
+            pages = r_json['@odata.nextLink']
         for item in r_json["value"] :
             data = json.dumps(item)
             event = helper.new_event(source=helper.get_input_type(), index=helper.get_output_index(), sourcetype=helper.get_sourcetype(), data=data)
             # event = helper.new_event(source=opt_altospam_domain, index="main", sourcetype="altospam:api:test", data=data)
             ew.write_event(event)
+        
+        # Verification des pages suivantes (limit à 1000 results par page API Graph)
+        while "@odata.nextLink" in r_json:
+            url = pages
+            payload={}
+            headers = {
+            'Authorization': 'Bearer ' + token
+            }
+
+            response = requests.request("GET", url, headers=headers, data=payload)
+            # helper.log_info(response.text)
+
+            r_json = json.loads(response.text)
+            r_status = response.status_code
+
+            if r_status == 200:
+                if "@odata.nextLink" in r_json:
+                    pages = r_json['@odata.nextLink']
+                for item in r_json["value"] :
+                    data = json.dumps(item)
+                    event = helper.new_event(source=helper.get_input_type(), index=helper.get_output_index(), sourcetype=helper.get_sourcetype(), data=data)
+                    # event = helper.new_event(source=opt_altospam_domain, index="main", sourcetype="altospam:api:test", data=data)
+                    ew.write_event(event)
+
     helper.log_info("Request successful")
     
     if r_status != 200 :
